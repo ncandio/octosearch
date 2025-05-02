@@ -1,5 +1,8 @@
 # OctoSearch
 
+![Screenshot 2025-05-02 030249](https://github.com/user-attachments/assets/683adb91-1c47-4d2a-8306-64eb831a478d)
+
+
 A simple web application for searching code across GitHub repositories using the GitHub Search API. This project is a simple exercise for learning Flask, a micro web framework written in Python.
 
 For more information about Flask, check out the official documentation at [https://flask.palletsprojects.com/en/stable/](https://flask.palletsprojects.com/en/stable/).
