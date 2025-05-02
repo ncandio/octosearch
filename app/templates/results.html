@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OctoSearch Results - {{ query }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><a href="/">OctoSearch</a></h1>
+        </header>
+        
+        <div class="search-container">
+            <form action="/search" method="get" id="search-form">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        id="search-input" 
+                        placeholder="Search code" 
+                        value="{{ query }}"
+                        required
+                    >
+                    <button type="submit" id="search-button">Search</button>
+                </div>
+                
+                <div class="search-options">
+                    <div class="option-group">
+                        <label for="sort">Sort by:</label>
+                        <select name="sort" id="sort">
+                            <option value="best-match" {% if request.args.get('sort') == 'best-match' %}selected{% endif %}>Best match</option>
+                            <option value="indexed" {% if request.args.get('sort') == 'indexed' %}selected{% endif %}>Recently indexed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="order">Order:</label>
+                        <select name="order" id="order">
+                            <option value="desc" {% if request.args.get('order', 'desc') == 'desc' %}selected{% endif %}>Descending</option>
+                            <option value="asc" {% if request.args.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="per_page">Results per page:</label>
+                        <select name="per_page" id="per_page">
+                            <option value="30" {% if request.args.get('per_page', '30') == '30' %}selected{% endif %}>30</option>
+                            <option value="50" {% if request.args.get('per_page') == '50' %}selected{% endif %}>50</option>
+                            <option value="100" {% if request.args.get('per_page') == '100' %}selected{% endif %}>100</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="results-container">
+            {% if results.get('error') %}
+                <div class="error-message">
+                    <h3>Error ({{ results.status_code }})</h3>
+                    <p>{{ results.message }}</p>
+                </div>
+            {% else %}
+                <div class="results-summary">
+                    <h3>{{ results.total_count }} code results</h3>
+                </div>
+                
+                {% if results.items %}
+                    <div class="results-list">
+                        {% for item in results.items %}
+                            <div class="result-item">
+                                <h4>
+                                    <a href="{{ item.html_url }}" target="_blank">
+                                        {{ item.repository.full_name }} / {{ item.path }}
+                                    </a>
+                                </h4>
+                                <div class="result-details">
+                                    <span class="repo-info">
+                                        <a href="{{ item.repository.html_url }}" target="_blank">
+                                            {{ item.repository.full_name }}
+                                        </a>
+                                    </span>
+                                    <span class="path-info">
+                                        {{ item.path }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if results.total_count > results.items|length %}
+                        <div class="pagination">
+                            {% set current_page = request.args.get('page', '1')|int %}
+                            {% set per_page = request.args.get('per_page', '30')|int %}
+                            {% set total_pages = (results.total_count / per_page)|round(0, 'ceil')|int %}
+                            {% set max_pages = 10 if total_pages > 10 else total_pages %}
+                            
+                            {% if current_page > 1 %}
+                                <a href="{{ url_for('search', q=query, sort=request.args.get('sort', 'best-match'), 
+                                        order=request.args.get('order', 'desc'), per_page=per_page, page=current_page-1) }}" 
+                                    class="page-link">Previous</a>
+                            {% endif %}
+                            
+                            {% for page_num in range(1, max_pages + 1) %}
+                                <a href="{{ url_for('search', q=query, sort=request.args.get('sort', 'best-match'), 
+                                        order=request.args.get('order', 'desc'), per_page=per_page, page=page_num) }}" 
+                                    class="page-link {% if page_num == current_page %}active{% endif %}">
+                                    {{ page_num }}
+                                </a>
+                            {% endfor %}
+                            
+                            {% if current_page < total_pages and current_page < max_pages %}
+                                <a href="{{ url_for('search', q=query, sort=request.args.get('sort', 'best-match'), 
+                                        order=request.args.get('order', 'desc'), per_page=per_page, page=current_page+1) }}" 
+                                    class="page-link">Next</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="no-results">
+                        <p>No results found.</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

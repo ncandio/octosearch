@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OctoSearch - GitHub Code Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OctoSearch</h1>
+            <p>Search code across GitHub repositories</p>
+        </header>
+        
+        <div class="search-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/a fun and cartoonish image of the octopus of github.png') }}" alt="GitHub Octopus Logo">
+            </div>
+            <form action="/search" method="get" id="search-form">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        id="search-input" 
+                        placeholder="Search code (e.g. 'function in:file language:javascript')" 
+                        required
+                    >
+                    <button type="submit" id="search-button">Search</button>
+                </div>
+                
+                <div class="search-options">
+                    <div class="option-group">
+                        <label for="sort">Sort by:</label>
+                        <select name="sort" id="sort">
+                            <option value="best-match">Best match</option>
+                            <option value="indexed">Recently indexed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="order">Order:</label>
+                        <select name="order" id="order">
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="per_page">Results per page:</label>
+                        <select name="per_page" id="per_page">
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="search-tips">
+            <h3>Search Tips:</h3>
+            <ul>
+                <li><code>keyword</code> - Search for code containing the keyword</li>
+                <li><code>org:organization</code> - Limit search to an organization</li>
+                <li><code>user:username</code> - Limit search to a user's repositories</li>
+                <li><code>repo:username/repo</code> - Limit search to a specific repository</li>
+                <li><code>language:name</code> - Limit search to a programming language</li>
+                <li><code>path:directory</code> - Limit search to file paths</li>
+                <li><code>extension:ext</code> - Limit search to file extensions</li>
+                <li><code>size:n</code> - Limit search to files of size n kilobytes</li>
+                <li><code>in:file,path</code> - Search in file contents and/or paths</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
